@@ -16,9 +16,17 @@ MongoClient.connect(url, { useNewUrlParser: true }, (err, db) => {
   dbo = db.db("VideoChat");
 });
 reloadMagic(app);
-let attemptingToCall = {};
+const accountSid = "AC2516e12d623defbaf2dc44b38ce81966";
+const authToken = "831f8264a89848d11d554879e71e1aca";
+const client = require("twilio")(accountSid, authToken);
+
+
 app.use("/", express.static("build"));
 app.use("/", express.static("public"));
+
+app.get("/getServers", (req, res) => {
+  client.tokens.create().then(token => res.send(JSON.stringify(token)));
+})
 
 app.post("/signup", upload.none(), (req, res) => {
   let username = req.body.username;

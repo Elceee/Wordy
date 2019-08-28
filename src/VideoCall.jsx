@@ -1,10 +1,6 @@
 import React, { Component } from "react";
 
-var isChannelReady = false;
-var isInitiator = false;
-var isStarted = false;
 var pc;
-var turnReady;
 
 var sdpConstraints = {
   offerToReceiveAudio: true,
@@ -33,7 +29,11 @@ class VideoCall extends Component {
       room: this.props.id
     };
   }
-  componentDidMount = () => {
+  componentDidMount = async () => {
+    let response = await fetch("/getServers");
+    let responseBody = await response.text();
+    let body = JSON.parse(responseBody);
+    pcConfig.iceServers = body.iceServers;
     let socket = io();
     let room = this.props.id;
     socket.emit("create or join", room);
@@ -115,7 +115,7 @@ class VideoCall extends Component {
 
   createPeerConnection = () => {
     try {
-      pc = new RTCPeerConnection(null);
+      pc = new RTCPeerConnection(pcConfig);
       pc.onicecandidate = this.handleIceCandidate;
       pc.onaddstream = this.handleRemoteStreamAdded;
       pc.onremovestream = this.handleRemoteStreamRemoved;
