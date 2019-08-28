@@ -132,6 +132,6 @@ app.all("/*", (req, res, next) => {
   res.sendFile(__dirname + "/build/index.html");
 });
 
-http.listen(4000, "0.0.0.0", () => {
+http.listen(process.env.PORT, "0.0.0.0", () => {
   console.log("Server running on port 4000");
 });
