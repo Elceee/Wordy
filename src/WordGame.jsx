@@ -49,7 +49,7 @@ class UnconnectedWordGame extends Component {
         availableLetters: letters,
         lettersAsObject: lettersAsObject
       });
-      setTimeout(sendWords, 10000);
+      setTimeout(sendWords, 90000);
     });
     socket.on("scoreUpdate", data => {
       let username = data.username;
