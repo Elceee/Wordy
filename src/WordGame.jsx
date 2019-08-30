@@ -47,9 +47,10 @@ class UnconnectedWordGame extends Component {
       this.setState({
         letters: letters,
         availableLetters: letters,
-        lettersAsObject: lettersAsObject
+        lettersAsObject: lettersAsObject,
+        gameRunning: true
       });
-      setTimeout(sendWords, 90000);
+      setTimeout(sendWords, 30000);
     });
     socket.on("scoreUpdate", data => {
       let username = data.username;
@@ -59,7 +60,7 @@ class UnconnectedWordGame extends Component {
         this.setState({
           opponentScore: score,
           opponentWords: words,
-          opponentName: name
+          opponentName: username
         });
         return;
       } else this.setState({ ownScore: score, ownWords: words });
