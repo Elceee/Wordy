@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import WordGame from "./WordGame.jsx";
+import { connect } from "react-redux";
 
 var pc;
 
@@ -15,7 +17,7 @@ var pcConfig = {
   ]
 };
 
-class VideoCall extends Component {
+class UnconnectedVideoCall extends Component {
   constructor(props) {
     super(props);
     this.localVideoRef = React.createRef();
@@ -26,7 +28,8 @@ class VideoCall extends Component {
       isChannelReady: false,
       isInitiator: false,
       isStarted: false,
-      room: this.props.id
+      room: this.props.id,
+      isGameStart: false
     };
   }
   componentDidMount = async () => {
@@ -37,6 +40,11 @@ class VideoCall extends Component {
     let socket = io();
     let room = this.props.id;
     socket.emit("create or join", room);
+    socket.on("gameStart", () => {
+      if (!this.state.isGameStart) {
+        this.setState({ isGameStart: true });
+      }
+    });
     socket.on("created", room => {
       console.log("socket.on created");
       this.setState({ isInitiator: true });
@@ -177,19 +185,61 @@ class VideoCall extends Component {
     socket.emit("message", message, this.state.room);
   };
 
+  startGame = event => {
+    event.preventDefault();
+    this.setState({ isGameStart: true });
+  };
+
   render = () => {
-    return (
-      <div>
-        <h1>Test Video</h1>
-        <video ref={this.localVideoRef} autoPlay playsInline />
-        <video ref={this.remoteVideoRef} autoPlay playsInline />
+    if (!this.state.isGameStart) {
+      return (
+        <div>
+          <h1>Your Video Call</h1>
+          <video
+            className="localVideo"
+            ref={this.localVideoRef}
+            autoPlay
+            playsInline
+          />
+          <video
+            className="remoteVideo"
+            ref={this.remoteVideoRef}
+            autoPlay
+            playsInline
+          />
 
-        <button onClick={this.connectCall}>Call</button>
+          <button onClick={this.startGame}>Start Game</button>
 
-        <script src="https://webrtc.github.io/adapter/adapter-latest.js" />
-      </div>
-    );
+          <script src="https://webrtc.github.io/adapter/adapter-latest.js" />
+        </div>
+      );
+    }
+    if (this.state.isGameStart) {
+      return (
+        <div>
+          <h1>Your Video Call</h1>
+          <video
+            className="localVideo"
+            ref={this.localVideoRef}
+            autoPlay
+            playsInline
+          />
+          <video
+            className="remoteVideo"
+            ref={this.remoteVideoRef}
+            autoPlay
+            playsInline
+          />
+
+          <WordGame id={this.props.id} />
+
+          <script src="https://webrtc.github.io/adapter/adapter-latest.js" />
+        </div>
+      );
+    }
   };
 }
+
+let VideoCall = connect()(UnconnectedVideoCall);
 
 export default VideoCall;

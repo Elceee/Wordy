@@ -1,3 +1,5 @@
+let { vowels, consonants } = require("./src/constants.js");
+
 let express = require("express");
 let app = express();
 let reloadMagic = require("./reload-magic.js");
@@ -7,6 +9,9 @@ const cookieparser = require("cookie-parser");
 app.use(cookieparser());
 let http = require("http").createServer(app);
 let io = require("socket.io")(http);
+let fs = require("fs");
+let wordListPath = require("word-list");
+const wordArray = fs.readFileSync(wordListPath, "utf8").split("\n");
 let MongoClient = require("mongodb").MongoClient;
 let ObjectId = require("mongodb").ObjectID;
 let dbo;
@@ -126,12 +131,49 @@ io.on("connection", socket => {
   socket.on("bye", () => {
     console.log("a user hung up");
   });
+  socket.on("gameStart", room => {
+    socket.join(room);
+    console.log("gameStart back end");
+    io.in(room).emit("gameStart");
+  });
+  socket.on("newRound", room => {
+    socket.join(room);
+    console.log("in new round back end");
+    let newLetters = [];
+    let remainingLetters = 10;
+    let vowelNumber = Math.round(Math.random() * 2) + 2;
+    let consonantsNumber = remainingLetters - vowelNumber;
+    for (let x = 0; x < vowelNumber; x++) {
+      newLetters.push(vowels[Math.round(Math.random() * (vowels.length - 1))]);
+    }
+    for (let y = 0; y < consonantsNumber; y++) {
+      newLetters.push(
+        consonants[Math.round(Math.random() * (consonants.length - 1))]
+      );
+    }
+    console.log("newletters", newLetters, room, typeof room);
+    io.in(room).emit("newLetters", { newLetters });
+  });
+  socket.on("submittedWords", (room, submittedWords, username) => {
+    let validWords = [];
+    let points = 0
+    let userWords = JSON.parse(submittedWords);
+    room = JSON.parse(room);
+    username = JSON.parse(username);
+    userWords.forEach(word => {
+      if (wordArray.includes(word)) {
+        points += word.length
+        validWords.push(word);
+      }
+    });
+    io.in(room).emit("scoreUpdate", {words: validWords, score: points, username})
+  });
 });
 
 app.all("/*", (req, res, next) => {
   res.sendFile(__dirname + "/build/index.html");
 });
 
-http.listen(process.env.PORT, "0.0.0.0", () => {
+http.listen(process.env.PORT || 4000, "0.0.0.0", () => {
   console.log("Server running on port 4000");
 });

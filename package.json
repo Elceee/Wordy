@@ -29,6 +29,7 @@
     "chokidar": "^3.0.0",
     "cookie-parser": "^1.4.4",
     "express": "^4.16.4",
+    "fs": "0.0.1-security",
     "mongodb": "^3.3.1",
     "multer": "^1.4.2",
     "react-redux": "6.0.1",
@@ -38,6 +39,7 @@
     "socket.io": "^2.2.0",
     "twilio": "^3.33.4",
     "webpack-inject-plugin": "^1.5.0",
+    "word-list": "^3.1.0",
     "ws": "^7.0.0"
   }
 }

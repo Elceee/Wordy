@@ -12,7 +12,7 @@ let reducer = (state, action) => {
 
 let store = createStore(
   reducer,
-  { username: undefined, users: [] },
+  { username: undefined, users: [], socketID: "" },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
 
