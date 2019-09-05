@@ -3,7 +3,7 @@ import JoinLobby from "./JoinLobby.jsx";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import RandomWord from "./RandomWord.jsx";
-import "./Landingpage.css";
+import "./LandingPage.css";
 
 class UnconnectedLandingPage extends Component {
   constructor(props) {
