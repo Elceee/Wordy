@@ -1,0 +1,37 @@
+.NavbarContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  top: 0px;
+  height: 5vh;
+  width: 100vw;
+  background-color: grey;
+  border-bottom: 3px solid black;
+}
+
+.NavBarItem {
+  font-size: 14;
+  color: black;
+  font-family: "Times New Roman", Times, serif;
+  font-weight: bold;
+  height: 5vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.NavBarItem:hover {
+  cursor: pointer;
+  color: deepskyblue;
+}
+
+.NavBarNonClickable {
+  font-size: 14;
+  color: black;
+  font-family: "Times New Roman", Times, serif;
+  font-weight: bold;
+  height: 5vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

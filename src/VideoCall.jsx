@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import WordGame from "./WordGame.jsx";
 import { connect } from "react-redux";
+import "./Conversation.css";
 
 var pc;
 
@@ -94,7 +94,7 @@ class UnconnectedVideoCall extends Component {
     navigator.mediaDevices
       .getUserMedia({
         video: true,
-        audio: false
+        audio: true
       })
       .then(gotLocalMediaStream);
   };
@@ -193,46 +193,27 @@ class UnconnectedVideoCall extends Component {
   render = () => {
     if (!this.state.isGameStart) {
       return (
-        <div>
+        <div className="videoCallContainer">
           <h1>Your Video Call</h1>
-          <video
-            className="localVideo"
-            ref={this.localVideoRef}
-            autoPlay
-            playsInline
-          />
-          <video
-            className="remoteVideo"
-            ref={this.remoteVideoRef}
-            autoPlay
-            playsInline
-          />
+          <div className="videoholder">
+            <div className="videoContainer">
+              <video
+                className="localVideo"
+                ref={this.localVideoRef}
+                autoPlay
+                playsInline
+              />
+            </div>
 
-          <button onClick={this.startGame}>Start Game</button>
-
-          <script src="https://webrtc.github.io/adapter/adapter-latest.js" />
-        </div>
-      );
-    }
-    if (this.state.isGameStart) {
-      return (
-        <div>
-          <h1>Your Video Call</h1>
-          <video
-            className="localVideo"
-            ref={this.localVideoRef}
-            autoPlay
-            playsInline
-          />
-          <video
-            className="remoteVideo"
-            ref={this.remoteVideoRef}
-            autoPlay
-            playsInline
-          />
-
-          <WordGame id={this.props.id} />
-
+            <div className="videoContainer">
+              <video
+                className="remoteVideo"
+                ref={this.remoteVideoRef}
+                autoPlay
+                playsInline
+              />
+            </div>
+          </div>
           <script src="https://webrtc.github.io/adapter/adapter-latest.js" />
         </div>
       );
@@ -240,6 +221,10 @@ class UnconnectedVideoCall extends Component {
   };
 }
 
-let VideoCall = connect()(UnconnectedVideoCall);
+let mapStateToProps = state => {
+  return { username: state.username };
+};
+
+let VideoCall = connect(mapStateToProps)(UnconnectedVideoCall);
 
 export default VideoCall;

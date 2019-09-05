@@ -1,0 +1,44 @@
+.friendsListContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  min-width: 100vw;
+}
+
+.listContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  padding-top: 20px;
+}
+
+.acceptedFriends {
+  min-width: 20vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nameContainer {
+  min-width: 10vw;
+  width: 10vw;
+}
+
+.incomingFriendRequests {
+  display: flex;
+  flex-direction: column;
+}
+
+.friendRequestsList {
+  margin-right: 60px;
+}
+
+.greenButton {
+  background-color: lightgreen;
+  font-weight: bold;
+}
+
+.redButton {
+  background-color: lightcoral;
+  font-weight: bold;
+}

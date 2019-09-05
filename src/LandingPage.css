@@ -1,0 +1,65 @@
+.mainContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.generalInfoContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  min-width: 100vw;
+  min-height: 20vh;
+  font-size: 15pt;
+  line-height: 1.5em;
+}
+
+.one {
+  background-image: linear-gradient(to right, blue, darkblue, indigo, darkblue);
+  background-size: cover;
+}
+
+.two {
+  margin-top: 40px;
+}
+
+.generalInfoItemRow {
+  padding: 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 80vw;
+}
+
+.generalInfoItem {
+  width: 60vw;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+  font-weight: bold;
+}
+
+.infoCard {
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 300px;
+  height: 150px;
+  border: 2px solid black;
+  margin-top: 40px;
+  border-radius: 5%;
+  box-shadow: 2px 2px black;
+}
+
+.landingPageButton {
+  width: 300px;
+  border-radius: 5%;
+}

@@ -7,6 +7,9 @@ let reducer = (state, action) => {
   if (action.type === "setUsers") {
     return { ...state, users: action.users };
   }
+  if (action.type === "logout") {
+    return { ...state, username: undefined };
+  }
   return state;
 };
 

@@ -1,9 +1,12 @@
 import React, { Component } from "react";
-import VideoCall from "./VideoCall.jsx";
 import { connect } from "react-redux";
-import LoginSignUp from "./LoginSignup.jsx";
-import ActiveUserList from "./ActiveUserList.jsx";
-import { BrowserRouter, Route } from "react-router-dom";
+import { BrowserRouter, Route, withRouter, Link } from "react-router-dom";
+import JoinLobby from "./JoinLobby.jsx";
+import FriendsList from "./FriendsList.jsx";
+import Conversation from "./Conversation.jsx";
+import NavBar from "./NavBar.jsx";
+import LandingPage from "./LandingPage.jsx";
+import LoginPage from "./LoginPage.jsx";
 
 class UnconnectedApp extends Component {
   constructor(props) {
@@ -11,30 +14,40 @@ class UnconnectedApp extends Component {
     this.state = {};
   }
 
-  renderLandingPage = () => {
-    return <ActiveUserList />;
+  componentDidMount = async () => {
+    let response = await fetch("/isUserLoggedIn");
+    let responseBody = await response.text();
+    let body = JSON.parse(responseBody);
+    if (body.success) {
+      this.props.dispatch({ type: "loginSuccess", username: body.username });
+    }
   };
 
-  renderVideoChat = routerdata => {
+  renderLandingPage = () => {
+    return <LandingPage />;
+  };
+
+  renderConversation = routerdata => {
     let id = routerdata.match.params.id;
-    return <VideoCall id={id} />;
+    return <Conversation id={id} />;
+  };
+
+  renderFriends = () => {
+    return <FriendsList />;
   };
 
   render = () => {
     if (this.props.username === undefined) {
-      return (
-        <div>
-          <LoginSignUp endpoint="/login" />
-          <LoginSignUp endpoint="/signup" />
-        </div>
-      );
+      return <LoginPage />;
     }
     return (
       <BrowserRouter>
+        <NavBar />
+        <Route path={"/friends"} exact render={this.renderFriends} />
         <Route
           path={"/conversations/:id"}
           exact
-          render={this.renderVideoChat}
+          render={this.renderConversation}
         />
         <Route path={"/"} exact render={this.renderLandingPage} />
       </BrowserRouter>

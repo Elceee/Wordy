@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Timer from "./Timer.jsx";
 import { connect } from "react-redux";
 
 class UnconnectedWordGame extends Component {
@@ -17,7 +18,8 @@ class UnconnectedWordGame extends Component {
       opponentScore: 0,
       opponentWords: [],
       opponentName: "",
-      gameEnded: false
+      gameEnded: false,
+      userMessage: ""
     };
   }
 
@@ -48,9 +50,13 @@ class UnconnectedWordGame extends Component {
         letters: letters,
         availableLetters: letters,
         lettersAsObject: lettersAsObject,
-        gameRunning: true
+        gameRunning: true,
+        gameStart: true
       });
       setTimeout(sendWords, 30000);
+    });
+    socket.on("error", data => {
+      alert(data.message);
     });
     socket.on("scoreUpdate", data => {
       let username = data.username;
@@ -121,8 +127,11 @@ class UnconnectedWordGame extends Component {
     if (userReplies.includes(properFormattedWord)) {
       this.setState({
         availableLetters: this.state.letters,
-        userInput: "You've already submitted that word!"
+        userMessage: "You've already submitted that word!"
       });
+      setTimeout(() => {
+        this.setState({ userMessage: "" });
+      }, 1000);
       return;
     }
     userReplies.push(properFormattedWord);
@@ -133,9 +142,8 @@ class UnconnectedWordGame extends Component {
     });
   };
 
-  startGame = event => {
+  startGame = () => {
     this.sendGameAction("newRound");
-    this.setState({ gameStart: true, gameRunning: true });
   };
 
   renderWordsAsDivs = words => {
@@ -168,9 +176,11 @@ class UnconnectedWordGame extends Component {
     if (this.state.gameRunning) {
       return (
         <div>
+          <Timer />
           <div className="letters">{this.renderLetters()}</div>
           <h4>Words entered</h4>
           <div>{this.renderWordsAsDivs(this.state.submittedWords)}</div>
+          <div>{this.state.userMessage}</div>
           <form onSubmit={this.onSubmitHandler}>
             <input
               type="text"
@@ -195,6 +205,7 @@ class UnconnectedWordGame extends Component {
             {this.state.opponentName}'s words{" "}
             {this.renderWordsAsDivs(this.state.opponentWords)}
           </div>
+          <button onClick={this.startGame}>Play Again?</button>
         </div>
       );
     }

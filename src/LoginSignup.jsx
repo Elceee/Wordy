@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import "./LoginSignUp.css";
 
 class UnconnectedLoginSignUp extends Component {
   constructor(props) {
@@ -40,8 +41,9 @@ class UnconnectedLoginSignUp extends Component {
 
   render = () => {
     return (
-      <div>
-        <form onSubmit={this.OnSubmit}>
+      <div className="loginContainer">
+        <h2 className="loginTitle">{this.props.name}</h2>
+        <form onSubmit={this.OnSubmit} className="loginForm">
           <input
             type="text"
             onChange={this.usernameOnChangeHandler}
@@ -49,7 +51,7 @@ class UnconnectedLoginSignUp extends Component {
             placeholder="Username"
           ></input>
           <input
-            type="text"
+            type="password"
             onChange={this.passwordOnChangeHandler}
             value={this.state.passwordInput}
             placeholder="Password"
