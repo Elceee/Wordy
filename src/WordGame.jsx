@@ -25,7 +25,7 @@ class UnconnectedWordGame extends Component {
   }
 
   componentDidMount = () => {
-    let sendWords = () => {
+    this.sendWords = () => {
       socket.emit(
         "submittedWords",
         JSON.stringify(this.props.id),
@@ -53,9 +53,10 @@ class UnconnectedWordGame extends Component {
         lettersAsObject: lettersAsObject,
         gameRunning: true,
         gameStart: true,
-        submittedWords: []
+        submittedWords: [],
+        userMessage: ""
       });
-      setTimeout(sendWords, 30000);
+      setTimeout(this.sendWords, 30000);
     });
     socket.on("error", data => {
       alert(data.message);
