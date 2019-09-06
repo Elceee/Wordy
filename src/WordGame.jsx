@@ -26,6 +26,7 @@ class UnconnectedWordGame extends Component {
 
   componentDidMount = () => {
     this.sendWords = () => {
+      let socket = io();
       socket.emit(
         "submittedWords",
         JSON.stringify(this.props.id),
