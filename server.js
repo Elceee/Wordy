@@ -440,7 +440,7 @@ io.on("connection", socket => {
     io.in(room).emit("gameStart");
   });
   socket.on("newRound", room => {
-    socket.join(room);
+    
     let clientsInRoom = io.sockets.adapter.rooms[room];
     console.log(io.sockets.adapter.rooms[room]);
     let numClients = clientsInRoom ? Object.keys(clientsInRoom).length : 0;
@@ -522,6 +522,6 @@ app.all("/*", (req, res, next) => {
   res.sendFile(__dirname + "/build/index.html");
 });
 
-http.listen(process.env.PORT, "0.0.0.0", () => {
+http.listen(process.env.PORT || 4000, "0.0.0.0", () => {
   console.log("Server running on port 4000");
 });
