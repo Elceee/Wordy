@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Timer from "./Timer.jsx";
 import { connect } from "react-redux";
+import "./Conversation.css";
 
 class UnconnectedWordGame extends Component {
   constructor(props) {
@@ -19,7 +20,7 @@ class UnconnectedWordGame extends Component {
       opponentWords: [],
       opponentName: "",
       gameEnded: false,
-      userMessage: ""
+      userMessage: "To start playing Wordy click begin!"
     };
   }
 
@@ -34,10 +35,10 @@ class UnconnectedWordGame extends Component {
       this.setState({ gameEnded: true, gameRunning: false });
     };
     let socket = io();
-    socket.emit("gameStart", this.props.id);
     socket.on("gameStart", () => {
       this.setState({ gameStart: true });
     });
+    socket.emit("gameStart", this.props.id);
     socket.on("newLetters", letters => {
       console.log("recieved new letters");
       letters = letters.newLetters;
@@ -51,7 +52,8 @@ class UnconnectedWordGame extends Component {
         availableLetters: letters,
         lettersAsObject: lettersAsObject,
         gameRunning: true,
-        gameStart: true
+        gameStart: true,
+        submittedWords: []
       });
       setTimeout(sendWords, 30000);
     });
@@ -73,6 +75,14 @@ class UnconnectedWordGame extends Component {
     });
   };
 
+  componentWillUnmount = () => {
+    let socket = io();
+    socket.off("gameStart");
+    socket.off("newLetters");
+    socket.off("error");
+    socket.off("scoreUpdate");
+  };
+
   sendGameAction = message => {
     console.log("sending game action", message);
     let instruction = message.toString();
@@ -81,8 +91,13 @@ class UnconnectedWordGame extends Component {
   };
 
   renderLetters = () => {
+    let key = 0;
     return this.state.availableLetters.map(letter => {
-      return <div className="letterBox">{letter}</div>;
+      return (
+        <div key={key++} className="letterBox">
+          {letter}
+        </div>
+      );
     });
   };
 
@@ -144,11 +159,12 @@ class UnconnectedWordGame extends Component {
 
   startGame = () => {
     this.sendGameAction("newRound");
+    this.setState({ userMessage: "" });
   };
 
   renderWordsAsDivs = words => {
     return words.map(word => {
-      return <div>{word}</div>;
+      return <div key={word}>{word}</div>;
     });
   };
 
@@ -160,28 +176,21 @@ class UnconnectedWordGame extends Component {
       !this.state.gameEnded
     ) {
       return (
-        <div>
-          <form onSubmit={this.onSubmitHandler}>
-            <input
-              type="text"
-              onChange={this.textInputOnChangeHandler}
-              value={this.state.userInput}
-            />
-            <input type="submit" />
-          </form>
+        <div className="wordGameContainer">
+          <div className="userMessage">{this.state.userMessage}</div>
           <button onClick={this.startGame}>Begin!</button>
         </div>
       );
     }
     if (this.state.gameRunning) {
       return (
-        <div>
+        <div className="wordGameContainer">
           <Timer />
           <div className="letters">{this.renderLetters()}</div>
           <h4>Words entered</h4>
           <div>{this.renderWordsAsDivs(this.state.submittedWords)}</div>
           <div>{this.state.userMessage}</div>
-          <form onSubmit={this.onSubmitHandler}>
+          <form className="wordGameForm" onSubmit={this.onSubmitHandler}>
             <input
               type="text"
               onChange={this.textInputOnChangeHandler}
@@ -194,7 +203,7 @@ class UnconnectedWordGame extends Component {
     }
     if (this.state.gameEnded) {
       return (
-        <div>
+        <div className="wordGameContainer">
           <h2>Game Over!</h2>
           <div>Your score: {this.state.ownScore}</div>
           <div>Your words {this.renderWordsAsDivs(this.state.ownWords)}</div>

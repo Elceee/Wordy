@@ -79,7 +79,7 @@ class UnconnectedVideoCall extends Component {
           candidate: message.candidate
         });
         pc.addIceCandidate(candidate);
-      } else if (message === "bye" && isStarted) {
+      } else if (message === "bye" && this.state.isStarted) {
         this.handleRemoteHangup();
       }
     });
@@ -99,6 +99,11 @@ class UnconnectedVideoCall extends Component {
       .then(gotLocalMediaStream);
   };
 
+  componentWillUnmount = () => {
+    let socket = io();
+    this.state.localStream.getTracks().forEach(track => track.stop());
+    // socket.emit("bye", this.state.room);
+  };
   doAnswer = () => {
     pc.createAnswer(
       this.setLocalAndSendMessage,
@@ -176,7 +181,7 @@ class UnconnectedVideoCall extends Component {
   };
 
   handleRemoteHangup = () => {
-    stop();
+    window.stop();
     this.state.isInitiator = false;
   };
 
@@ -194,7 +199,6 @@ class UnconnectedVideoCall extends Component {
     if (!this.state.isGameStart) {
       return (
         <div className="videoCallContainer">
-          <h1>Your Video Call</h1>
           <div className="videoholder">
             <div className="videoContainer">
               <video

@@ -33,8 +33,22 @@ class UnconnectedFriendsList extends Component {
     }
   };
 
-  callFriend = event => {
-    this.props.history.push("/conversations/" + event);
+  callFriend = async (linkName, friend) => {
+    let data = new FormData();
+    data.append("username", this.props.username);
+    data.append("friendName", friend);
+    let response = await fetch("/callFriend", {
+      method: "POST",
+      body: data,
+      credentials: "include"
+    });
+    let responseBody = await response.text();
+    let body = JSON.parse(responseBody);
+    if (body.success) {
+      this.props.history.push("/conversations/" + linkName);
+    } else {
+      alert("Your friend hasn't answered your last call");
+    }
   };
 
   removeFriend = async friend => {
@@ -113,10 +127,10 @@ class UnconnectedFriendsList extends Component {
       usernames = usernames.sort();
       let linkName = usernames.join("");
       return (
-        <li className="listContainer">
+        <li className="listContainer" key={friend}>
           <div className="nameContainer">{friend}:</div>
           <button
-            onClick={() => this.callFriend(linkName)}
+            onClick={() => this.callFriend(linkName, friend)}
             className="greenButton"
           >
             Call
@@ -138,7 +152,7 @@ class UnconnectedFriendsList extends Component {
     });
     return pendingFriends.map(friend => {
       return (
-        <li className="listContainer">
+        <li className="listContainer" key={friend}>
           <div className="nameContainer">{friend.user}:</div>
           <button
             onClick={this.acceptFriend}
@@ -172,7 +186,7 @@ class UnconnectedFriendsList extends Component {
       );
     } else {
       return sentFriendRequests.map(friend => {
-        return <li>{friend.user}</li>;
+        return <li key={friend}>{friend.user}</li>;
       });
     }
   };

@@ -27,6 +27,7 @@ const client = require("twilio")(accountSid, authToken);
 let nextRoom = {};
 let sessions = {};
 let chatMessages = {};
+let switchBoard = {};
 app.use("/", express.static("build"));
 app.use("/", express.static("public"));
 
@@ -107,6 +108,28 @@ app.get("/isUserLoggedIn", (req, res) => {
   if (sessions[sid] !== undefined) {
     res.send(JSON.stringify({ success: true, username: sessions[sid] }));
   }
+});
+
+app.post("/isUserBeingCalled", upload.none(), (req, res) => {
+  let username = req.body.username;
+  if (Object.keys(switchBoard).includes(username)) {
+    let responseObject = { success: true, caller: switchBoard[username] };
+    res.send(JSON.stringify(responseObject));
+    delete switchBoard[username];
+    return;
+  }
+  res.send(JSON.stringify({ success: false }));
+});
+
+app.post("/callFriend", upload.none(), (req, res) => {
+  let username = req.body.username;
+  let friendName = req.body.friendName;
+  if (switchBoard[friendName] === undefined) {
+    switchBoard[friendName] = username;
+    res.send(JSON.stringify({ success: true }));
+    return;
+  }
+  res.send(JSON.stringify({ success: false }));
 });
 
 app.post("/allUsers", upload.none(), (req, res) => {
@@ -379,15 +402,25 @@ io.on("connection", socket => {
   socket.on("create or join", room => {
     console.log("in create or join");
     let clientsInRoom = io.sockets.adapter.rooms[room];
-    let numClients = clientsInRoom ? Object.keys(clientsInRoom).length : 0;
+    let numClients = clientsInRoom
+      ? Object.keys(clientsInRoom.sockets).length
+      : 0;
 
     if (numClients === 0) {
-      console.log("should be 0 clients", numClients);
+      console.log(
+        "should be 0 clients",
+        numClients,
+        io.sockets.adapter.rooms[room]
+      );
       socket.join(room);
       console.log("creating room", room);
       socket.emit("created", room, socket.id);
-    } else if (numClients === 2) {
-      console.log("should be 1 client", numClients);
+    } else if (numClients === 1) {
+      console.log(
+        "should be 1 client",
+        numClients,
+        io.sockets.adapter.rooms[room]
+      );
       io.sockets.in(room).emit("join");
       socket.join(room);
       socket.emit("joined", room, socket.id);
@@ -397,8 +430,9 @@ io.on("connection", socket => {
       socket.emit("full", room);
     }
   });
-  socket.on("bye", () => {
-    console.log("a user hung up");
+  socket.on("bye", room => {
+    socket.to(room).emit("message", "bye");
+    socket.leave(room);
   });
   socket.on("gameStart", room => {
     socket.join(room);
@@ -466,7 +500,7 @@ io.on("connection", socket => {
     let messages = chatMessages[room];
     messages = messages
       .reverse()
-      .slice(0, 19)
+      .slice(0, 15)
       .reverse();
     messages.push(newMessage);
     chatMessages[room] = messages;

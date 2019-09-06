@@ -9,18 +9,17 @@ class UnconnectedChat extends Component {
 
   componentDidMount = async () => {
     let socket = io();
-    socket.emit("joinChat", this.props.id);
     socket.on("newMessage", data => {
       console.log("got new messages");
       let messages = data.messages;
       this.setState({ messages });
     });
-    socket.emit(
-      "sendMessage",
-      this.props.id,
-      `${this.props.username} has joined the chat`,
-      this.props.username
-    );
+    socket.emit("joinChat", this.props.id);
+  };
+
+  componentWillUnmount = () => {
+    let socket = io();
+    socket.off("newMessage");
   };
 
   sendMessage = event => {
@@ -36,12 +35,21 @@ class UnconnectedChat extends Component {
   };
 
   renderMessages = () => {
+    let key = 2;
     return this.state.messages.map(message => {
-      return (
-        <div>
-          {message.user}: {message.message}
-        </div>
-      );
+      if (key % 2 === 0) {
+        return (
+          <div className="even" key={key++}>
+            {message.user}: {message.message}
+          </div>
+        );
+      } else {
+        return (
+          <div className="odd" key={key++}>
+            {message.user}: {message.message}
+          </div>
+        );
+      }
     });
   };
 
@@ -52,7 +60,7 @@ class UnconnectedChat extends Component {
     return (
       <div>
         <div>{this.renderMessages()}</div>
-        <form onSubmit={this.sendMessage}>
+        <form className="wordGameForm" onSubmit={this.sendMessage}>
           <input
             type="text"
             onChange={this.chatOnChangeHandler}

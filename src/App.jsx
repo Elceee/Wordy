@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { BrowserRouter, Route, withRouter, Link } from "react-router-dom";
-import JoinLobby from "./JoinLobby.jsx";
 import FriendsList from "./FriendsList.jsx";
 import Conversation from "./Conversation.jsx";
 import NavBar from "./NavBar.jsx";
 import LandingPage from "./LandingPage.jsx";
 import LoginPage from "./LoginPage.jsx";
-
+import CallPopUp from "./CallPopUp.jsx";
 class UnconnectedApp extends Component {
   constructor(props) {
     super(props);
@@ -21,6 +20,26 @@ class UnconnectedApp extends Component {
     if (body.success) {
       this.props.dispatch({ type: "loginSuccess", username: body.username });
     }
+    let isBeingCalled = async () => {
+      let data = new FormData();
+      data.append("username", this.props.username);
+      let response = await fetch("/isUserBeingCalled", {
+        method: "POST",
+        body: data,
+        credentials: "include"
+      });
+      let responseBody = await response.text();
+      let body = JSON.parse(responseBody);
+      if (body.success) {
+        this.props.dispatch({
+          type: "incomingCall",
+          name: body.caller,
+          isCalling: true
+        });
+      }
+      setTimeout(isBeingCalled, 1000);
+    };
+    setTimeout(isBeingCalled, 1000);
   };
 
   renderLandingPage = () => {
@@ -43,6 +62,7 @@ class UnconnectedApp extends Component {
     return (
       <BrowserRouter>
         <NavBar />
+        <CallPopUp />
         <Route path={"/friends"} exact render={this.renderFriends} />
         <Route
           path={"/conversations/:id"}

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import "./LandingPage.css";
 class RandomWord extends Component {
   constructor(props) {
@@ -16,12 +15,17 @@ class RandomWord extends Component {
     });
   };
 
+  componentWillUnmount = () => {
+    let socket = io();
+    socket.off("newWord");
+  };
+
   render = () => {
     return (
       <div className="infoCard">
         <div>Your random word!</div>
         <h2>{this.state.word}</h2>
-        <div>
+        <div key={this.state.word}>
           Read about {this.state.word}&nbsp;
           <a
             href={"https://en.wiktionary.org/wiki/" + this.state.word}
