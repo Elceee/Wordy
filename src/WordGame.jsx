@@ -27,6 +27,11 @@ class UnconnectedWordGame extends Component {
   componentDidMount = () => {
     this.sendWords = () => {
       let socket = io();
+      console.log(
+        this.props.id,
+        this.state.submittedWords,
+        this.props.username
+      );
       socket.emit(
         "submittedWords",
         JSON.stringify(this.props.id),
@@ -73,11 +78,15 @@ class UnconnectedWordGame extends Component {
           opponentName: username
         });
         return;
-      } else this.setState({ ownScore: score, ownWords: words });
+      } else
+        this.setState({ ownScore: score, ownWords: words }, () => {
+          console.log(this.state);
+        });
     });
   };
 
   componentWillUnmount = () => {
+    this.sendWords = null;
     let socket = io();
     socket.off("gameStart");
     socket.off("newLetters");
@@ -159,9 +168,9 @@ class UnconnectedWordGame extends Component {
     });
   };
 
-  startGame = () => {
+  startGame = event => {
+    event.preventDefault();
     this.sendGameAction("newRound");
-    this.setState({ userMessage: "" });
   };
 
   renderWordsAsDivs = words => {

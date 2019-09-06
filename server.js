@@ -440,18 +440,6 @@ io.on("connection", socket => {
     io.in(room).emit("gameStart");
   });
   socket.on("newRound", room => {
-    
-    let clientsInRoom = io.sockets.adapter.rooms[room];
-    console.log(io.sockets.adapter.rooms[room]);
-    let numClients = clientsInRoom ? Object.keys(clientsInRoom).length : 0;
-    console.log(numClients);
-    if (numClients < 2) {
-      socket.emit("error", {
-        message: "Please wait till both players join the room to begin the game"
-      });
-      console.log("not enough players in room", numClients);
-      return;
-    }
     console.log("in new round back end");
     let newLetters = [];
     let remainingLetters = 10;
@@ -469,6 +457,7 @@ io.on("connection", socket => {
     io.in(room).emit("newLetters", { newLetters });
   });
   socket.on("submittedWords", (room, submittedWords, username) => {
+    console.log("recieved words from", username, submittedWords)
     let validWords = [];
     let points = 0;
     let userWords = JSON.parse(submittedWords);
