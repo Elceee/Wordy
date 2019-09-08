@@ -11,6 +11,28 @@ class UnconnectedLandingPage extends Component {
     this.state = {};
   }
 
+  componentDidMount = () => {
+    if (!this.props.checkingForCall) {
+      let isBeingCalled = async () => {
+        this.props.dispatch({ type: "checkingForCalls" });
+        console.log("checking for calls", this.props.username);
+        let data = new FormData();
+        data.append("username", this.props.username);
+        let response = await fetch("/isUserBeingCalled");
+        let responseBody = await response.text();
+        let body = JSON.parse(responseBody);
+        if (body.success) {
+          this.props.dispatch({
+            type: "incomingCall",
+            name: body.caller,
+            isCalling: true
+          });
+        }
+        setTimeout(isBeingCalled, 1000);
+      };
+      setTimeout(isBeingCalled, 1000);
+    }
+  };
   sendSocial = event => {
     event.preventDefault();
     this.props.history.push("/friends");
@@ -57,7 +79,7 @@ class UnconnectedLandingPage extends Component {
 }
 
 let mapStateToProps = state => {
-  return { username: state.username };
+  return { username: state.username, checkingForCall: state.checkingForCall };
 };
 
 let LandingPage = connect(mapStateToProps)(withRouter(UnconnectedLandingPage));

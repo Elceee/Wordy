@@ -110,8 +110,8 @@ app.get("/isUserLoggedIn", (req, res) => {
   }
 });
 
-app.post("/isUserBeingCalled", upload.none(), (req, res) => {
-  let username = req.body.username;
+app.get("/isUserBeingCalled", (req, res) => {
+  let username = sessions[req.cookies.sid];
   if (Object.keys(switchBoard).includes(username)) {
     let responseObject = { success: true, caller: switchBoard[username] };
     res.send(JSON.stringify(responseObject));
@@ -457,7 +457,7 @@ io.on("connection", socket => {
     io.in(room).emit("newLetters", { newLetters });
   });
   socket.on("submittedWords", (room, submittedWords, username) => {
-    console.log("recieved words from", username, submittedWords)
+    console.log("recieved words from", username, submittedWords);
     let validWords = [];
     let points = 0;
     let userWords = JSON.parse(submittedWords);

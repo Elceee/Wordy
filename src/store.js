@@ -17,12 +17,24 @@ let reducer = (state, action) => {
       incomingCaller: action.name
     };
   }
+  if (action.type === "checkingForCalls") {
+    return {
+      ...state,
+      checkingForCall: true
+    };
+  }
   return state;
 };
 
 let store = createStore(
   reducer,
-  { username: undefined, users: [], incomingCall: false, incomingCaller: "" },
+  {
+    username: undefined,
+    users: [],
+    incomingCall: false,
+    incomingCaller: "",
+    checkingForCall: false
+  },
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
 

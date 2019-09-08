@@ -20,26 +20,6 @@ class UnconnectedApp extends Component {
     if (body.success) {
       this.props.dispatch({ type: "loginSuccess", username: body.username });
     }
-    let isBeingCalled = async () => {
-      let data = new FormData();
-      data.append("username", this.props.username);
-      let response = await fetch("/isUserBeingCalled", {
-        method: "POST",
-        body: data,
-        credentials: "include"
-      });
-      let responseBody = await response.text();
-      let body = JSON.parse(responseBody);
-      if (body.success) {
-        this.props.dispatch({
-          type: "incomingCall",
-          name: body.caller,
-          isCalling: true
-        });
-      }
-      setTimeout(isBeingCalled, 1000);
-    };
-    setTimeout(isBeingCalled, 1000);
   };
 
   renderLandingPage = () => {
