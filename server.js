@@ -2,7 +2,6 @@ let { vowels, consonants } = require("./src/constants.js");
 
 let express = require("express");
 let app = express();
-let reloadMagic = require("./reload-magic.js");
 const multer = require("multer");
 const upload = multer();
 const cookieparser = require("cookie-parser");
@@ -20,7 +19,6 @@ let url =
 MongoClient.connect(url, { useNewUrlParser: true }, (err, db) => {
   dbo = db.db("VideoChat");
 });
-// reloadMagic(app);
 const accountSid = "AC2516e12d623defbaf2dc44b38ce81966";
 const authToken = "831f8264a89848d11d554879e71e1aca";
 const client = require("twilio")(accountSid, authToken);
