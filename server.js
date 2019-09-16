@@ -14,13 +14,14 @@ const wordArray = fs.readFileSync(wordListPath, "utf8").split("\n");
 let MongoClient = require("mongodb").MongoClient;
 let ObjectId = require("mongodb").ObjectID;
 let dbo;
-let url =
-  "mongodb+srv://bob:bobsue@decodecluster-dssfv.mongodb.net/test?retryWrites=true&w=majority";
-MongoClient.connect(url, { useNewUrlParser: true }, (err, db) => {
+let url = require("./mongoUrl.js");
+let accountSid = require("./twilioAccountSid.js");
+let authToken = require("./twilioAuthToken.js");
+MongoClient.connect(url(), { useNewUrlParser: true }, (err, db) => {
   dbo = db.db("VideoChat");
 });
-const accountSid = "AC2516e12d623defbaf2dc44b38ce81966";
-const authToken = "831f8264a89848d11d554879e71e1aca";
+const accountSid = accountSid();
+const authToken = authToken();
 const client = require("twilio")(accountSid, authToken);
 let nextRoom = {};
 let sessions = {};

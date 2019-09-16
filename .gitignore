@@ -6,6 +6,10 @@
 # production
 /dist
 
+/mongoUrl.js
+/twilioAccountSid.js
+/twilioAuthToken.js
+
 
 /build
 # misc
