@@ -12,7 +12,6 @@ let fs = require("fs");
 let wordListPath = require("word-list");
 const wordArray = fs.readFileSync(wordListPath, "utf8").split("\n");
 let MongoClient = require("mongodb").MongoClient;
-let ObjectId = require("mongodb").ObjectID;
 let dbo;
 let url = require("./mongoUrl.js");
 let accountSid = require("./twilioAccountSid.js");
@@ -20,9 +19,7 @@ let authToken = require("./twilioAuthToken.js");
 MongoClient.connect(url(), { useNewUrlParser: true }, (err, db) => {
   dbo = db.db("VideoChat");
 });
-const accountSid = accountSid();
-const authToken = authToken();
-const client = require("twilio")(accountSid, authToken);
+const client = require("twilio")(accountSid(), authToken());
 let nextRoom = {};
 let sessions = {};
 let chatMessages = {};
