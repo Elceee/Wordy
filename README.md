@@ -1,5 +1,1 @@
-To start the server, run `nodemon server.js`
-
-Modify the `server.js` file to add endpoints
-
-The frontend code goes in the `/src` directory
+A live version of the site can be found here: https://decodefinalproject.herokuapp.com/
