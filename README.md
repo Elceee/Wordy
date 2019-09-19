@@ -3,4 +3,5 @@ A live version of the site can be found here: https://decodefinalproject.herokua
 Guest Login Information: 
 
 Username: Guest
+
 Password: Guest
